@@ -1,0 +1,51 @@
+{
+  "name": "hdns",
+  "version": "0.0.0",
+  "description": "Handshake resolver for node.js",
+  "keywords": [
+    "dns",
+    "handshake",
+    "hsk",
+    "udp"
+  ],
+  "license": "MIT",
+  "repository": "git://github.com/bcoin-org/hdns.git",
+  "homepage": "https://github.com/bcoin-org/hdns",
+  "bugs": {
+    "url": "https://github.com/bcoin-org/hdns/issues"
+  },
+  "author": "Christopher Jeffrey <chjjeffrey@gmail.com>",
+  "main": "./lib/hdns.js",
+  "scripts": {
+    "browserify": "browserify -s hdns lib/hdns.js | uglifyjs -c > hdns.js",
+    "clean": "rm -f hdns.js",
+    "lint": "eslint lib/ test/ || exit 0",
+    "test": "mocha --reporter spec test/*-test.js",
+    "webpack": "webpack --config webpack.config.js"
+  },
+  "dependencies": {
+    "bcrypto": "~0.2.0",
+    "binet": "~0.1.0",
+    "bns": "~0.0.5"
+  },
+  "devDependencies": {
+    "babelify": "^8.0.0",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.6.1",
+    "browserify": "^16.1.1",
+    "eslint": "^4.18.2",
+    "mocha": "^5.0.4",
+    "uglifyjs-webpack-plugin": "^1.2.3",
+    "uglify-es": "^3.3.9",
+    "webpack": "^4.1.1"
+  },
+  "engines": {
+    "node": ">=7.6.0"
+  },
+  "browserify": {
+    "transform": [
+      "babelify"
+    ]
+  }
+}
