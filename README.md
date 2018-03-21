@@ -92,7 +92,7 @@ HDNS comes with a dig-like tool called `hdig.js`.
 ``` bash
 $ hdig.js @akqq3xoch6cgluhgqh2n7lm4lh4d2zjuzyiekudx6d37xckhp26dg@127.0.0.1 -p 53 www.ietf.org +dnssec
 
-; <<>> hdns 0.0.0 <<>> @akqq3xoch6cgluhgqh2n7lm4lh4d2zjuzyiekudx6d37xckhp26dg@127.0.0.1 -p 53 www.ietf.org +dnssec
+; <<>> hdig.js 0.0.0 <<>> @akqq3xoch6cgluhgqh2n7lm4lh4d2zjuzyiekudx6d37xckhp26dg@127.0.0.1 -p 53 www.ietf.org +dnssec
 ; (1 server found)
 ;; global options: +cmd
 ;; Got answer:

@@ -11,7 +11,7 @@ let name = null;
 let type = null;
 let host = null;
 let key = null;
-let port = null;
+let port = 53;
 let inet = null;
 let reverse = false;
 let json = false;
@@ -53,7 +53,7 @@ for (let i = 2; i < process.argv.length; i++) {
     case '--help':
     case '-?':
     case '-v':
-      console.log(`bns ${pkg.version}`);
+      console.log(`hdig.js ${pkg.version}`);
       process.exit(0);
       break;
     case '+edns':
@@ -117,11 +117,17 @@ async function lookup(name) {
 }
 
 async function resolve(name, type, options) {
-  const resolver = dns.Resolver();
+  const resolver = new dns.Resolver({
+    type: inet,
+    rd,
+    edns,
+    dnssec
+  });
+
   const {host, port, key} = options;
 
   if (host) {
-    const server = IP.toHost(host, port || 53, key);
+    const server = IP.toHost(host, port, key);
     resolver.setServers([server]);
   }
 
@@ -131,20 +137,20 @@ async function resolve(name, type, options) {
   return resolver.resolveRaw(name, type);
 }
 
+function printHeader(host) {
+  const argv = process.argv.slice(2).join(' ');
+  process.stdout.write('\n');
+  process.stdout.write(`; <<>> hdig.js ${pkg.version} <<>> ${argv}\n`);
+  if (host)
+    process.stdout.write('; (1 server found)\n');
+  process.stdout.write(';; global options: +cmd\n');
+}
+
 (async () => {
-  const now = Date.now();
-
-  if (!json) {
-    const argv = process.argv.slice(2).join(' ');
-    process.stdout.write('\n');
-    process.stdout.write(`; <<>> hdns ${pkg.version} <<>> ${argv}\n`);
-    if (host)
-      process.stdout.write('; (1 server found)\n');
-    process.stdout.write(';; global options: +cmd\n');
-  }
-
   if (host && !util.isIP(host))
     host = await lookup(host);
+
+  const now = Date.now();
 
   const res = await resolve(name, type, {
     host,
@@ -164,6 +170,7 @@ async function resolve(name, type, options) {
     const text = JSON.stringify(res.toJSON(), null, 2);
     process.stdout.write(text + '\n');
   } else {
+    printHeader(host);
     process.stdout.write(';; Got answer:\n');
     process.stdout.write(res.toString(ms, host, port) + '\n');
   }
@@ -172,6 +179,7 @@ async function resolve(name, type, options) {
     console.error(err.message);
     process.exit(1);
   } else {
-    process.stdout.write(`;; ${err.stack}\n`);
+    printHeader(host);
+    process.stdout.write(`;; error; ${err.stack}\n`);
   }
 });
