@@ -85,6 +85,32 @@ IP addresses associated with ECDSA keys are prefixed with a base32-encoded
 secp256k1 key (compressed). If no key is placed before the IP address, SIG(0)
 validation will be not be performed.
 
+## Usage in Node.js
+
+TCP and UDP sockets in node.js usually allow you to pass a custom `lookup`
+function for DNS resolution. This includes the HTTP module.
+
+This module provides a compatibility lookup function called `legacy`, which is
+basically a callback wrapper around `hdns.lookup`.
+
+Example:
+
+``` js
+const dns = require('hdns');
+const http = require('http');
+
+http.get({
+  protocol: 'http:',
+  hostname: 'icanhazip.com',
+  lookup: dns.legacy
+}, (res) => {
+  res.setEncoding('utf8');
+  res.on('data', (data) => {
+    console.log(data);
+  });
+});
+```
+
 ## Digging
 
 HDNS comes with a dig-like tool called `hdig.js`.
