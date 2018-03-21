@@ -20,7 +20,7 @@ a means for provability.
 ``` js
 const dns = require('hdns');
 // Passing a raw ASN1 certificate buffer:
-const certs = await dns.lookupTLSA('foo.example.com', cert);
+const certs = await dns.resolveTLSA('foo.example.com', cert);
 console.log(certs);
 ```
 
@@ -54,7 +54,7 @@ that they can be stored offline.
 ``` js
 const dns = require('hdns');
 // Passing a raw ssh key buffer:
-const fps = await dns.lookupSSHFP('foo.example.com', key);
+const fps = await dns.resolveSSHFP('foo.example.com', key);
 console.log(fps);
 ```
 
@@ -84,6 +84,43 @@ nameserver aorsxa4ylaacshipyjkfbvzfkh3jhh4yowtoqdt64nzemqtiw2whk@127.0.0.1:5359
 IP addresses associated with ECDSA keys are prefixed with a base32-encoded
 secp256k1 key (compressed). If no key is placed before the IP address, SIG(0)
 validation will be not be performed.
+
+## Digging
+
+HDNS comes with a dig-like tool called `hdig.js`.
+
+``` bash
+$ hdig.js @akqq3xoch6cgluhgqh2n7lm4lh4d2zjuzyiekudx6d37xckhp26dg@127.0.0.1 -p 53 www.ietf.org +dnssec
+
+; <<>> hdns 0.0.0 <<>> @akqq3xoch6cgluhgqh2n7lm4lh4d2zjuzyiekudx6d37xckhp26dg@127.0.0.1 -p 53 www.ietf.org +dnssec
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 20186
+;; flags: qr rd ra ad, QUERY: 1, ANSWER: 3, AUTHORITY: 0, ADDITIONAL: 2
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags: do, udp: 4096
+;; QUESTION SECTION:
+;www.ietf.org. IN A
+
+;; ANSWER SECTION:
+www.ietf.org. 1800 IN CNAME www.ietf.org.cdn.cloudflare.net.
+www.ietf.org.cdn.cloudflare.net. 300 IN A 104.20.1.85
+www.ietf.org.cdn.cloudflare.net. 300 IN A 104.20.0.85
+
+;; SIG0 PSEUDOSECTION:
+. 0 ANY SIG 0 253 0 0 20180321132604 20180321131404 0 . h+SGk9niEFUeAkwQdQnuP8Tyvk2sMGLSF/FwHCEQnhghPZHwnKALtuu3 NIjFm8krfX/6TWsixnm0ZbyTDAZtRQ==  ; alg = PRIVATEDNS
+
+;; Query time: 1066 msec
+;; SERVER: 127.0.0.1#53(127.0.0.1)
+;; WHEN: Wed Mar 21 06:20:04 PDT 2018
+;; MSG SIZE  rcvd: 286
+```
+
+This is a query to our local SPV node. Note the SIG(0) signature in the
+additional section: this isn't technically necessary for local SPV nodes, but
+it's nice to have for remote servers.
 
 ## Contribution and License Agreement
 
