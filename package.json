@@ -16,6 +16,9 @@
   },
   "author": "Christopher Jeffrey <chjjeffrey@gmail.com>",
   "main": "./lib/hdns.js",
+  "bin": {
+    "hdig.js": "./bin/hdig.js"
+  },
   "scripts": {
     "browserify": "browserify -s hdns lib/hdns.js | uglifyjs -c > hdns.js",
     "clean": "rm -f hdns.js",
