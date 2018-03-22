@@ -12,7 +12,7 @@ let type = null;
 let host = null;
 let key = null;
 let port = 53;
-let inet = null;
+let inet6 = null;
 let reverse = false;
 let json = false;
 let rd = true;
@@ -28,10 +28,10 @@ for (let i = 2; i < process.argv.length; i++) {
 
   switch (arg) {
     case '-4':
-      inet = 'udp4';
+      inet6 = false;
       break;
     case '-6':
-      inet = 'udp6';
+      inet6 = true;
       break;
     case '-x':
       reverse = true;
@@ -117,14 +117,18 @@ async function lookup(name) {
 }
 
 async function resolve(name, type, options) {
-  const resolver = new dns.Resolver({
-    type: inet,
-    rd,
-    edns,
-    dnssec
-  });
-
   const {host, port, key} = options;
+  const resolver = new dns.Resolver(options);
+
+  if (options.debug) {
+    resolver.on('error', (err) => {
+      console.error(err.stack);
+    });
+
+    resolver.on('log', (...args) => {
+      console.error(...args);
+    });
+  }
 
   if (host) {
     const server = IP.toHost(host, port, key);
@@ -156,7 +160,7 @@ function printHeader(host) {
     host,
     key,
     port,
-    inet,
+    inet6,
     reverse,
     rd,
     edns,
