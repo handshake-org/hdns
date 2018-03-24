@@ -19,7 +19,6 @@ a means for provability.
 
 ``` js
 const dns = require('hdns');
-
 const tlsa = await dns.resolveTLSA('foo.example.com', 'tcp', 443);
 
 if (tlsa.length > 0) {
