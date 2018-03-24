@@ -19,20 +19,19 @@ a means for provability.
 
 ``` js
 const dns = require('hdns');
-// Passing a raw ASN1 certificate buffer:
-const certs = await dns.resolveTLSA('foo.example.com', cert);
-console.log(certs);
+
+const tlsa = await dns.resolveTLSA('foo.example.com', 'tcp', 443);
+
+if (tlsa.length > 0) {
+  console.dir(tlsa);
+  // Passing a raw ASN1 certificate buffer:
+  if (dns.verifyTLSA(tlsa[0], cert))
+    console.log('Valid!');
+}
 ```
 
-The above will return all matching TLSA records with their respective ports,
-usages, and protocols.
-
-Output:
-
-``` js
-[ { protocol: 'tcp', port: 443, usage: 3 },
-  { protocol: 'https', port: 443, usage: 3 } ]
-```
+The above will return all matching TLSA records with their respective usages,
+selectors, matching types, and fingerprints.
 
 The call will throw an error if the DNSSEC trust chain was broken, or if a
 SIG(0) verification fails. If the TLSA record is directly on the blockchain
@@ -53,31 +52,29 @@ that they can be stored offline.
 
 ``` js
 const dns = require('hdns');
-// Passing a raw ssh key buffer:
-const fps = await dns.resolveSSHFP('foo.example.com', key);
-console.log(fps);
+const sshfp = await dns.resolveSSHFP('foo.example.com');
+
+if (sshfp.length > 0) {
+  console.dir(sshfp);
+  // Passing a raw ssh key buffer:
+  if (dns.verifySSHFP(sshfp[0], key))
+    console.log('Valid!');
+}
 ```
 
 The above will return all matching SSHFP records with their respective
 algorithms and fingerprints.
 
-Output:
-
-``` js
-[ { algorithm: 1, digestType: 1, fingerprint: <Buffer ...> },
-  { algorithm: 1, digestType: 2, fingerprint: <Buffer ...> } ]
-```
-
 Like TLSA, this will throw on any sort of security failure.
 
 ## Configuration
 
-Handshake specifies a new OS configuration file known as `hresolv.conf`. This
+Handshake specifies a new OS configuration file known as `hns.conf`. This
 file is nearly identical to resolv.conf except that it allows for nameserver
 public keys and nameserver ports. An example might be:
 
 ``` bash
-$ cat /etc/hresolv.conf
+$ cat /etc/hns.conf
 nameserver aorsxa4ylaacshipyjkfbvzfkh3jhh4yowtoqdt64nzemqtiw2whk@127.0.0.1:5359
 ```
 
