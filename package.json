@@ -29,7 +29,7 @@
   "dependencies": {
     "bcrypto": "~0.2.0",
     "binet": "~0.1.0",
-    "bns": "~0.0.9"
+    "bns": "~0.0.10"
   },
   "devDependencies": {
     "babelify": "^8.0.0",
