@@ -197,11 +197,11 @@ function printHeader(host) {
   }
 })().catch((err) => {
   if (json) {
-    console.error(err.message);
+    process.stdout.error(err.message + '\n');
     process.exit(1);
   } else {
     if (short) {
-      process.stdout.write(err.message + '\n');
+      process.stdout.error(err.message + '\n');
     } else {
       printHeader(host);
       process.stdout.write(`;; error; ${err.stack}\n`);
