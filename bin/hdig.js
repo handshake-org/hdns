@@ -4,7 +4,10 @@
 
 const dns = require('../');
 const IP = require('binet');
+const encoding = require('bns/lib/encoding');
+const Hosts = require('bns/lib/hosts');
 const util = require('bns/lib/util');
+const ResolvConf = require('../lib/resolvconf');
 const pkg = require('../package.json');
 
 let name = null;
@@ -12,6 +15,8 @@ let type = null;
 let host = null;
 let key = null;
 let port = 53;
+let conf = null;
+let hosts = null;
 let inet6 = null;
 let reverse = false;
 let json = false;
@@ -49,6 +54,14 @@ for (let i = 2; i < process.argv.length; i++) {
       break;
     case '-t':
       type = arg;
+      break;
+    case '--conf':
+      conf = ResolvConf.fromFile(process.argv[i + 1]);
+      i += 1;
+      break;
+    case '--hosts':
+      hosts = Hosts.fromFile(process.argv[i + 1]);
+      i += 1;
       break;
     case '-h':
     case '--help':
@@ -148,9 +161,6 @@ async function resolve(name, type, options) {
     resolver.setServers([server]);
   }
 
-  if (options.reverse)
-    return resolver.reverseRaw(name);
-
   return resolver.resolveRaw(name, type);
 }
 
@@ -167,14 +177,20 @@ function printHeader(host) {
   if (host && !util.isIP(host))
     host = await lookup(host);
 
+  if (reverse) {
+    name = encoding.reverse(name);
+    type = 'PTR';
+  }
+
   const now = Date.now();
 
   const res = await resolve(name, type, {
     host,
     key,
     port,
+    conf,
+    hosts,
     inet6,
-    reverse,
     rd,
     edns,
     dnssec,
@@ -196,15 +212,18 @@ function printHeader(host) {
     }
   }
 })().catch((err) => {
+  if (debug)
+    process.stderr.write(err.stack + '\n');
+
   if (json) {
-    process.stdout.error(err.message + '\n');
+    process.stderr.write(err.message + '\n');
     process.exit(1);
   } else {
     if (short) {
-      process.stdout.error(err.message + '\n');
+      process.stderr.write(err.message + '\n');
     } else {
       printHeader(host);
-      process.stdout.write(`;; error; ${err.stack}\n`);
+      process.stdout.write(`;; error; ${err.message}\n`);
     }
   }
 });
