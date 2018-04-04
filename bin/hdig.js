@@ -21,7 +21,7 @@ let inet6 = null;
 let reverse = false;
 let json = false;
 let rd = true;
-let edns = false;
+let edns = true;
 let dnssec = false;
 let short = false;
 let debug = false;
@@ -197,8 +197,6 @@ function printHeader(host) {
     debug
   });
 
-  const ms = Date.now() - now;
-
   if (json) {
     const text = JSON.stringify(res.toJSON(), null, 2);
     process.stdout.write(text + '\n');
@@ -208,7 +206,7 @@ function printHeader(host) {
     } else {
       printHeader(host);
       process.stdout.write(';; Got answer:\n');
-      process.stdout.write(res.toString(ms, host, port) + '\n');
+      process.stdout.write(res.toString(now, host, port) + '\n');
     }
   }
 })().catch((err) => {
