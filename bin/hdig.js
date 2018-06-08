@@ -4,11 +4,13 @@
 
 const dns = require('../');
 const IP = require('binet');
+const constants = require('bns/lib/constants');
 const encoding = require('bns/lib/encoding');
 const Hosts = require('bns/lib/hosts');
 const util = require('bns/lib/util');
 const ResolvConf = require('../lib/resolvconf');
 const pkg = require('../package.json');
+const {isTypeString} = constants;
 
 let name = null;
 let type = null;
@@ -21,10 +23,12 @@ let inet6 = null;
 let reverse = false;
 let json = false;
 let rd = true;
+let tcp = true;
 let edns = true;
 let dnssec = false;
 let short = false;
 let debug = false;
+let emailBits = 256;
 
 for (let i = 2; i < process.argv.length; i++) {
   const arg = process.argv[i];
@@ -55,6 +59,10 @@ for (let i = 2; i < process.argv.length; i++) {
     case '-t':
       type = arg;
       break;
+    case '-b':
+      emailBits = util.parseU16(process.argv[i + 1]);
+      i += 1;
+      break;
     case '--conf':
       conf = ResolvConf.fromFile(process.argv[i + 1]);
       i += 1;
@@ -69,6 +77,14 @@ for (let i = 2; i < process.argv.length; i++) {
     case '-v':
       console.log(`hdig.js ${pkg.version}`);
       process.exit(0);
+      break;
+    case '+vc':
+    case '+tcp':
+      tcp = true;
+      break;
+    case '+novc':
+    case '+notcp':
+      tcp = false;
       break;
     case '+edns':
       edns = true;
@@ -115,13 +131,13 @@ for (let i = 2; i < process.argv.length; i++) {
         break;
       }
 
-      if (!name) {
-        name = arg;
+      if (!type && isTypeString(arg)) {
+        type = arg;
         break;
       }
 
-      if (!type) {
-        type = arg;
+      if (!name) {
+        name = arg;
         break;
       }
 
@@ -134,6 +150,24 @@ if (!name)
 
 if (!type)
   type = 'A';
+
+if (type === 'SMIMEA' && name.indexOf('@') !== -1) {
+  const smimea = require('bns/lib/smimea');
+  try {
+    name = smimea.encodeEmail(name, emailBits);
+  } catch (e) {
+    ;
+  }
+}
+
+if (type === 'OPENPGPKEY' && name.indexOf('@') !== -1) {
+  const openpgpkey = require('bns/lib/openpgpkey');
+  try {
+    name = openpgpkey.encodeEmail(name, emailBits);
+  } catch (e) {
+    ;
+  }
+}
 
 async function lookup(name) {
   const options = { all: true, hints: dns.ADDRCONFIG };
@@ -192,6 +226,7 @@ function printHeader(host) {
     hosts,
     inet6,
     rd,
+    tcp,
     edns,
     dnssec,
     debug
@@ -204,8 +239,22 @@ function printHeader(host) {
     if (short) {
       process.stdout.write(res.toShort(name, type));
     } else {
+      if (res.malformed) {
+        process.stdout.write(';; Warning:');
+        process.stdout.write(' Message parser reports');
+        process.stdout.write(' malformed message packet.\n\n');
+      }
+
       printHeader(host);
+
       process.stdout.write(';; Got answer:\n');
+
+      // Note: should go after header flags.
+      if (rd && !res.ra) {
+        process.stdout.write(';; WARNING:');
+        process.stdout.write(' recursion requested but not available\n');
+      }
+
       process.stdout.write(res.toString(now, host, port) + '\n');
     }
   }
