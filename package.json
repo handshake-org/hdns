@@ -27,9 +27,9 @@
     "webpack": "webpack --mode production --config webpack.config.js"
   },
   "dependencies": {
-    "bcrypto": "~0.3.1",
+    "bcrypto": "~0.3.6",
     "binet": "~0.3.0",
-    "bns": "~0.1.0"
+    "bns": "~0.1.5"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
