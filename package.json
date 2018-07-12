@@ -29,7 +29,7 @@
   "dependencies": {
     "bcrypto": "~0.3.7",
     "binet": "~0.3.0",
-    "bns": "~0.1.6"
+    "bns": "~0.1.7"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
