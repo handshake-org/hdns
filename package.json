@@ -1,6 +1,7 @@
 {
   "name": "hdns",
   "version": "0.0.0",
+  "private": true,
   "description": "Handshake resolver for node.js",
   "keywords": [
     "dns",
@@ -9,10 +10,10 @@
     "udp"
   ],
   "license": "MIT",
-  "repository": "git://github.com/bcoin-org/hdns.git",
-  "homepage": "https://github.com/bcoin-org/hdns",
+  "repository": "git://github.com/handshake-org/hdns.git",
+  "homepage": "https://github.com/handshake-org/hdns",
   "bugs": {
-    "url": "https://github.com/bcoin-org/hdns/issues"
+    "url": "https://github.com/handshake-org/hdns/issues"
   },
   "author": "Christopher Jeffrey <chjjeffrey@gmail.com>",
   "main": "./lib/hdns.js",
