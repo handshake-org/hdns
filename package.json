@@ -1,7 +1,6 @@
 {
   "name": "hdns",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.0.1",
   "description": "Handshake resolver for node.js",
   "keywords": [
     "dns",
