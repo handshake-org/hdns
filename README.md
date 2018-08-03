@@ -12,7 +12,7 @@ console.log(await dns.lookup('google.com', { all: true }));
 
 The API is nearly identical to node.js, aside from it being promised based.
 
-That said, we do have some extra goodies now that HSK+DNS+DNSSEC can be used as
+That said, we do have some extra goodies now that HNS+DNS+DNSSEC can be used as
 a means for provability.
 
 ## Verifying TLS certs
