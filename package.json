@@ -21,14 +21,14 @@
   },
   "scripts": {
     "lint": "eslint lib/ test/ || exit 0",
-    "test": "mocha --reporter spec test/*-test.js"
+    "test": "bmocha --reporter spec test/*-test.js"
   },
   "dependencies": {
     "binet": "~0.3.2",
     "bns": "~0.6.0"
   },
   "devDependencies": {
-    "mocha": "^5.2.0"
+    "bmocha": "^0.1.0"
   },
   "engines": {
     "node": ">=8.0.0"
