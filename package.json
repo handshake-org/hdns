@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "binet": "~0.3.4",
-    "bns": "~0.6.2"
+    "bns": "~0.6.3"
   },
   "devDependencies": {
     "bmocha": "^1.0.0"
