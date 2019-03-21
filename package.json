@@ -1,6 +1,6 @@
 {
   "name": "hdns",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "Handshake resolver for node.js",
   "keywords": [
     "dns",
@@ -24,8 +24,8 @@
     "test": "bmocha --reporter spec test/*-test.js"
   },
   "dependencies": {
-    "binet": "~0.3.4",
-    "bns": "~0.6.4"
+    "binet": "~0.3.5",
+    "bns": "~0.6.5"
   },
   "devDependencies": {
     "bmocha": "^2.1.0"
